@@ -1,6 +1,6 @@
 import re, string, calendar
-from wikipedia import WikipediaPage
 import wikipedia
+from wikipedia import WikipediaPage
 from bs4 import BeautifulSoup
 from nltk import word_tokenize, pos_tag, ne_chunk
 from nltk.tree import Tree
@@ -103,6 +103,7 @@ def get_birth_date(name: str) -> str:
         birth date of the given person
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+
     pattern = r"(?:Born\D*)(?P<birth>\d{4}-\d{2}-\d{2})"
     error_text = (
         "Page infobox has no birth information (at least none in xxxx-xx-xx format)"
@@ -110,8 +111,57 @@ def get_birth_date(name: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("birth")
+def get_albumtitle(name: str) -> str:
+    """Gets birth date of the given person
 
+    Args:
+        name - name of the person
 
+    Returns:
+        birth date of the given person
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:album\s*)(?P<albumtitle>.*?)(?:B-side|A-side|Released)"
+    error_text = (
+        "Page infobox has no birth information (at least none in xxxx-xx-xx format)"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("albumtitle")
+def get_length(name: str) -> str:
+    """Gets birth date of the given person
+
+    Args:
+        name - name of the person
+
+    Returns:
+        birth date of the given person
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:length\D*)(?P<length>\d*:\d{2})"
+    error_text = (
+        "Page infobox has no birth information (at least none in xxxx-xx-xx format)"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("length")
+def get_release_date(name: str) -> str:
+    """Gets birth date of the given person
+
+    Args:
+        name - name of the person
+
+    Returns:
+        birth date of the given person
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:Released\s*)(?P<release>.*?)(?:Recorded)"
+    error_text = (
+        "Page infobox has no birth information (at least none in xxxx-xx-xx format)"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("release")
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself.
@@ -139,8 +189,36 @@ def polar_radius(matches: List[str]) -> List[str]:
         polar radius of planet
     """
     return [get_polar_radius(matches[0])]
+def albumtitle(matches: List[str]) -> List[str]:
+    """Returns polar radius of planet in matches
 
+    Args:
+        matches - match from pattern of planet to find polar radius of
 
+    Returns:
+        polar radius of planet
+    """
+    return [get_albumtitle(matches[0])]
+def length(matches: List[str]) -> List[str]:
+    """Returns polar radius of planet in matches
+
+    Args:
+        matches - match from pattern of planet to find polar radius of
+
+    Returns:
+        polar radius of planet
+    """
+    return [get_length(matches[0])]
+def release_date(matches: List[str]) -> List[str]:
+    """Returns polar radius of planet in matches
+
+    Args:
+        matches - match from pattern of planet to find polar radius of
+
+    Returns:
+        polar radius of planet
+    """
+    return [get_release_date(matches[0])]
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
     raise KeyboardInterrupt
